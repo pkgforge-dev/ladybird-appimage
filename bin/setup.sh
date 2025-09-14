@@ -34,7 +34,7 @@ URUNTIME="${GH_USER_CONTENT}/pkgforge-dev/Anylinux-AppImages/refs/heads/main/use
 
 wget "${DEBLOATED_PKGS}" -O /tmp/get-debloated-pkgs.sh
 chmod a+x /tmp/get-debloated-pkgs.sh
-sh /tmp/get-debloated-pkgs.sh --add-opengl --prefer-nano
+sh /tmp/get-debloated-pkgs.sh --add-opengl --prefer-nano libxml2-mini gtk3-mini opus-mini qt6-base-mini
 
 wget "${SHARUN}" -O quick-sharun
 chmod +x quick-sharun

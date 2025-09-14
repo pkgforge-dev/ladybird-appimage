@@ -5,7 +5,7 @@ set -eux
 rm -rf AppDir dist
 
 ARCH="$(uname -m)"
-VERSION="$(/opt/ladybird/usr/bin/Ladybird --version | awk '{print $2}')"
+VERSION="$(pacman -Q ladybird-git 2>/dev/null | awk '{print $2}')"
 
 export UPINFO="gh-releases-zsync|$(echo "${GITHUB_REPOSITORY}" | tr '/' '|')|latest|Ladybird-*$ARCH.AppImage.zsync"
 export URUNTIME_PRELOAD=1
