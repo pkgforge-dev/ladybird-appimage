@@ -7,13 +7,14 @@ rm -rf AppDir dist
 ARCH="$(uname -m)"
 VERSION="$(pacman -Q ladybird-git 2>/dev/null | awk '{print $2}')"
 
+export ADD_HOOKS="self-updater.bg.hook"
+export DEPLOY_OPENGL=1
+export DESKTOP="/opt/ladybird/usr/share/applications/org.ladybird.Ladybird.desktop"
+export EXEC_WRAPPER=1
+export ICON="/opt/ladybird/usr/share/icons/hicolor/scalable/apps/org.ladybird.Ladybird.svg"
+export OUTNAME="Ladybird-${VERSION}-${ARCH}.AppImage"
 export UPINFO="gh-releases-zsync|$(echo "${GITHUB_REPOSITORY}" | tr '/' '|')|latest|Ladybird-*$ARCH.AppImage.zsync"
 export URUNTIME_PRELOAD=1
-export DEPLOY_OPENGL=1
-export EXEC_WRAPPER=1
-export OUTNAME="Ladybird-${VERSION}-${ARCH}.AppImage"
-export DESKTOP="/opt/ladybird/usr/share/applications/org.ladybird.Ladybird.desktop"
-export ICON="/opt/ladybird/usr/share/icons/hicolor/scalable/apps/org.ladybird.Ladybird.svg"
 
 ./quick-sharun \
 	/opt/ladybird/usr/bin/* \
