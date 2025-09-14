@@ -31,7 +31,7 @@ GH_USER_CONTENT="https://raw.githubusercontent.com"
 DEBLOATED_PKGS="${GH_USER_CONTENT}/pkgforge-dev/Anylinux-AppImages/refs/heads/main/useful-tools/get-debloated-pkgs.sh"
 SHARUN="${GH_USER_CONTENT}/pkgforge-dev/Anylinux-AppImages/refs/heads/main/useful-tools/quick-sharun.sh"
 URUNTIME="${GH_USER_CONTENT}/pkgforge-dev/Anylinux-AppImages/refs/heads/main/useful-tools/uruntime2appimage.sh"
-PELF="${GH_BASE}/xplshn/pelf/releases/latest/download/pelf_$ARCH"
+PELF="${GH_BASE}/xplshn/pelf/releases/latest/download/pelf_$(uname -m)"
 
 wget "${DEBLOATED_PKGS}" -O /tmp/get-debloated-pkgs.sh
 chmod a+x /tmp/get-debloated-pkgs.sh
