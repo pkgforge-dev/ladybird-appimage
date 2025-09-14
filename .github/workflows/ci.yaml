@@ -77,6 +77,4 @@ jobs:
           tag_name: snapshot
           target_commitish: ${{ github.sha }}
           files: |
-            *.AppBundle*
-            *.AppImage*
-
+            *.App*
