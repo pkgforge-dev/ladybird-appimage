@@ -23,7 +23,7 @@ export ICON="/opt/ladybird/usr/share/icons/hicolor/scalable/apps/org.ladybird.La
 
 mv -v ./AppDir/lib/angle/usr/lib/* ./AppDir/lib
 cp -rv /opt/ladybird/usr/share/* ./AppDir/share
-OUTNAME="$OUTNAME.AppImage"./uruntime2appimage
+OUTNAME="$OUTNAME.AppImage" ./uruntime2appimage
 
 echo "Generating [dwfs]AppBundle..."
 UPINFO="gh-releases-zsync|$(echo "${GITHUB_REPOSITORY}" | tr '/' '|')|latest|Ladybird-*$ARCH.dwfs.AppBundle.zsync"
