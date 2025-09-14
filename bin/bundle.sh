@@ -37,4 +37,4 @@ OUTNAME="$OUTNAME.dwfs.AppBundle"
 	--output-to "./$OUTNAME"
 
 mkdir -p ./dist
-mv -v ./*.AppImage* ./dist
+mv -v ./*.App* ./dist
