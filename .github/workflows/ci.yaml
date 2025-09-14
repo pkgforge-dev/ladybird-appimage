@@ -4,6 +4,8 @@ concurrency:
   cancel-in-progress: true
 
 on:
+  schedule:
+    - cron: "0 0 * * *"
   workflow_dispatch: {}
   pull_request:
     paths-ignore:
@@ -19,7 +21,7 @@ jobs:
       actions: read
       security-events: write
       contents: write
-    name: Build (${{ matrix.arch }})
+    name: 🐞 Build Ladybird (${{ matrix.arch }})
     runs-on: ${{ matrix.runs-on }}
     strategy:
       matrix:
@@ -38,7 +40,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Build Ladybird
+      - name: 🐞 Build Ladybird
         run: |
           sh ./bin/setup.sh
           sh ./bin/bundle.sh
@@ -51,7 +53,7 @@ jobs:
           path: dist
 
   release_stable:
-    name: Release Ladybird AppImage
+    name: 🐞 Release Ladybird AppImage
     needs:
       - build_appimage
     permissions:
@@ -67,7 +69,7 @@ jobs:
         with:
           name: ladybird-appimage-x86_64
 
-      - name: Ladybird Snapshot Release
+      - name: 🐞 Ladybird Snapshot Release
         uses: softprops/action-gh-release@v2.3.3
         with:
           name: "Continous Release"
