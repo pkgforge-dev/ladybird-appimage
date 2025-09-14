@@ -11,7 +11,7 @@ export UPINFO="gh-releases-zsync|$(echo "${GITHUB_REPOSITORY}" | tr '/' '|')|lat
 export URUNTIME_PRELOAD=1
 export DEPLOY_OPENGL=1
 export EXEC_WRAPPER=1
-export OUTNAME="Ladybird-${VERSION}-${ARCH}.AppImage"
+export OUTNAME="Ladybird-${VERSION}-anylinux-${ARCH}"
 export DESKTOP="/opt/ladybird/usr/share/applications/org.ladybird.Ladybird.desktop"
 export ICON="/opt/ladybird/usr/share/icons/hicolor/scalable/apps/org.ladybird.Ladybird.svg"
 
@@ -23,7 +23,18 @@ export ICON="/opt/ladybird/usr/share/icons/hicolor/scalable/apps/org.ladybird.La
 
 mv -v ./AppDir/lib/angle/usr/lib/* ./AppDir/lib
 cp -rv /opt/ladybird/usr/share/* ./AppDir/share
-./uruntime2appimage
+OUTNAME="$OUTNAME.AppImage"./uruntime2appimage
+
+echo "Generating [dwfs]AppBundle..."
+UPINFO="gh-releases-zsync|$(echo "${GITHUB_REPOSITORY}" | tr '/' '|')|latest|Ladybird-*$ARCH.dwfs.AppBundle.zsync"
+OUTNAME="$OUTNAME.dwfs.AppBundle"
+./pelf --add-appdir ./AppDir                  \
+	--appimage-compat                         \
+	--disable-use-random-workdir              \
+	--add-updinfo "$UPINFO"                   \
+	--compression "-C zstd:level=22 -S26 -B8" \
+	--appbundle-id="org.ladybirdbrowser.ladybird#github.com/$GITHUB_REPOSITORY:$VERSION@$(date +%d_%m_%Y)" \
+	--output-to "./$OUTNAME"
 
 mkdir -p ./dist
 mv -v ./*.AppImage* ./dist
