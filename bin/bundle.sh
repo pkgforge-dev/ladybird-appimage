@@ -38,4 +38,4 @@ OUTNAME="$OUTNAME.dwfs.AppBundle"
 zsyncmake ./*.AppBundle -u ./*.AppBundle
 
 mkdir -p ./dist
-mv -v ./*.App* ./dist
+mv -v $OUTNAME* ./dist
