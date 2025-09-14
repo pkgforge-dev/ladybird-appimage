@@ -35,6 +35,7 @@ OUTNAME="$OUTNAME.dwfs.AppBundle"
 	--compression "-C zstd:level=22 -S26 -B8" \
 	--appbundle-id="org.ladybirdbrowser.ladybird#github.com/$GITHUB_REPOSITORY:$VERSION@$(date +%d_%m_%Y)" \
 	--output-to "./$OUTNAME"
+zsyncmake ./*.AppBundle -u ./*.AppBundle
 
 mkdir -p ./dist
 mv -v ./*.App* ./dist
