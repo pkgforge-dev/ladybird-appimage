@@ -17,10 +17,10 @@ CONFIG="[chaotic-aur]
 Include = /etc/pacman.d/chaotic-mirrorlist"
 
 if grep -q "$$chaotic-aur$$" /etc/pacman.conf; then
-    echo "The [chaotic-aur] section already exists in /etc/pacman.conf."
+	echo "The [chaotic-aur] section already exists in /etc/pacman.conf."
 else
-    echo "$CONFIG" | tee -a /etc/pacman.conf >/dev/null
-    echo "Configuration added to /etc/pacman.conf."
+	echo "$CONFIG" | tee -a /etc/pacman.conf >/dev/null
+	echo "Configuration added to /etc/pacman.conf."
 fi
 
 pacman -Syuq --needed --noconfirm --noprogressbar $deps

@@ -2,6 +2,8 @@
 
 set -eux
 
+rm -rf AppDir dist
+
 ARCH="$(uname -m)"
 VERSION="$(/opt/ladybird/usr/bin/Ladybird --version | awk '{print $2}')"
 
@@ -13,7 +15,14 @@ export OUTNAME="Ladybird-${VERSION}-${ARCH}.AppImage"
 export DESKTOP="/opt/ladybird/usr/share/applications/org.ladybird.Ladybird.desktop"
 export ICON="/opt/ladybird/usr/share/icons/hicolor/scalable/apps/org.ladybird.Ladybird.svg"
 
-./quick-sharun /opt/ladybird/usr/bin/Ladybird /opt/angle/usr/lib/*
+./quick-sharun \
+	/opt/ladybird/usr/bin/* \
+	/opt/ladybird/usr/lib/* \
+	/opt/ladybird/usr/lib/ladybird/* \
+	/opt/angle/usr/lib/*
+
+mv -v ./AppDir/lib/angle/usr/lib/* ./AppDir/lib
+cp -rv /opt/ladybird/usr/share/* ./AppDir/share
 ./uruntime2appimage
 
 mkdir -p ./dist
