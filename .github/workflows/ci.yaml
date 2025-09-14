@@ -79,5 +79,4 @@ jobs:
           files: |
             *.AppBundle*
             *.AppImage*
-            *.zsync
 
