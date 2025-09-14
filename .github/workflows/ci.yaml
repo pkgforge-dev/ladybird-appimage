@@ -1,0 +1,52 @@
+name: Build
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push: {}
+  workflow_dispatch: {}
+  pull_request:
+    paths-ignore:
+      - "**/*.md"
+      - "**/VERSION"
+    types: [opened, synchronize, reopened]
+  release:
+    types: [published]
+
+jobs:
+  build_appimage:
+    permissions:
+      actions: read
+      security-events: write
+      contents: write
+    name: Build (${{ matrix.arch }})
+    runs-on: ${{ matrix.runs-on }}
+    strategy:
+      matrix:
+        include:
+          # - arch: aarch64
+          #   platform: linux/arm64
+          #   runs-on: ubuntu-24.04-arm
+          - arch: x86_64
+            platform: linux/amd64
+            runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/pkgforge-dev/archlinux:latest
+    steps:
+      - name: Checkout ladybird-appimage
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Build Ladybird
+        run: |
+          sh ./bin/setup.sh
+          sh ./bin/bundle.sh
+
+      - name: Upload AppImage Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ladybird-appimage-${{ matrix.arch }}
+          retention-days: 7
+          path: dist
