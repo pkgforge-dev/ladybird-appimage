@@ -72,7 +72,7 @@ jobs:
       - name: 🐞 Ladybird Snapshot Release
         uses: softprops/action-gh-release@v2.3.3
         with:
-          name: "Continous Release"
+          name: "🐞 Continous Release"
           prerelease: false
           tag_name: snapshot
           target_commitish: ${{ github.sha }}
