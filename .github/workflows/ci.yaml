@@ -61,6 +61,17 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v5 # zizmor: ignore[artipacked]
+
+      - name: Clean-up Old Release Assets
+        run: |
+          gh release view tip --json assets --jq '.assets[].name' | while read -r asset; do
+            if [ -n "$asset" ]; then
+              gh release delete-asset tip "${asset}" -y
+            fi
+          done
+        env:
+          GH_TOKEN: ${{ github.token }}
       # - uses: actions/download-artifact@v5
       #   with:
       #     name: ladybird-appimage-aarch64
