@@ -65,9 +65,9 @@ jobs:
 
       - name: Clean-up Old Release Assets
         run: |
-          gh release view tip --json assets --jq '.assets[].name' | while read -r asset; do
+          gh release view snapshot --json assets --jq '.assets[].name' | while read -r asset; do
             if [ -n "$asset" ]; then
-              gh release delete-asset tip "${asset}" -y
+              gh release delete-asset snapshot "${asset}" -y
             fi
           done
         env:
