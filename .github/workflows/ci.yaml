@@ -46,7 +46,7 @@ jobs:
           sh ./bin/bundle.sh
 
       - name: Upload AppImage Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ladybird-appimage-${{ matrix.arch }}
           retention-days: 7
