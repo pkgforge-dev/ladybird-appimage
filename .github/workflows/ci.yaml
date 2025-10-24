@@ -76,7 +76,7 @@ jobs:
       #   with:
       #     name: ladybird-appimage-aarch64
 
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v6
         with:
           name: ladybird-appimage-x86_64
 
