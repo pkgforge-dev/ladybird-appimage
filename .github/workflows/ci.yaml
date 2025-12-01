@@ -81,7 +81,7 @@ jobs:
           name: ladybird-appimage-x86_64
 
       - name: 🐞 Ladybird Snapshot Release
-        uses: softprops/action-gh-release@v2.4.1
+        uses: softprops/action-gh-release@v2.5.0
         with:
           name: "🐞 Continous Release"
           prerelease: false
