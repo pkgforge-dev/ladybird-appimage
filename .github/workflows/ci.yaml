@@ -36,7 +36,7 @@ jobs:
       image: ghcr.io/pkgforge-dev/archlinux:latest
     steps:
       - name: Checkout ladybird-appimage
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           persist-credentials: false
 
@@ -61,7 +61,7 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5 # zizmor: ignore[artipacked]
+      - uses: actions/checkout@v6 # zizmor: ignore[artipacked]
 
       - name: Clean-up Old Release Assets
         run: |
