@@ -3,7 +3,7 @@
   <img src="./assets/images/appimage.png" alt="AppImage Logo" width="128">
   <br>Ladybird AppImage<br>
   <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT">
-  <img src="https://github.com/pkgforge-dev/ladybird-appimage/actions/workflows/appimage.yaml/badge.svg" alt="Build Status">
+  <img src="https://github.com/pkgforge-dev/ladybird-appimage/actions/workflows/appimage.yml/badge.svg" alt="Build Status">
   <img src="https://img.shields.io/github/v/release/pkgforge-dev/ladybird-appimage" alt="GitHub Release">
   <img src="https://img.shields.io/github/release-date/pkgforge-dev/ladybird-appimage" alt="GitHub Release Date">
   <img src="https://img.shields.io/github/downloads/pkgforge-dev/ladybird-appimage/total" alt="GitHub Downloads (all assets/images, all releases)">
