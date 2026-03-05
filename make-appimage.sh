@@ -18,7 +18,7 @@ quick-sharun \
 	/opt/ladybird/usr/lib/*          \
 	/opt/ladybird/usr/lib/ladybird/* \
 	/opt/angle/usr/lib/*             \
-	/opt/ladybird/usr/share
+	/opt/ladybird/usr/share/*
 
 mv -v ./AppDir/lib/angle/usr/lib/* ./AppDir/lib
 
