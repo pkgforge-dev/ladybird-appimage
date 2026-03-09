@@ -1,0 +1,25 @@
+#!/bin/sh
+
+# Tell ladybird the location of the host certificates with a flag
+# when they are not located in /etc/ssl/certs/ca-certificates.crt
+if [ ! -f /etc/ssl/certs/ca-certificates.crt ]; then
+	# do not do this if the --certificate flag was already given
+	for i do case "$i" in
+		--certificate|-C) _do_not_search_certs=1; break;;
+	esac; done
+
+	if [ "$_do_not_search_certs" != 1 ]; then
+		_possible_certs="
+		  /etc/pki/tls/cert.pem
+		  /etc/pki/tls/cacert.pem
+		  /etc/ssl/cert.pem
+		  /var/lib/ca-certificates/ca-bundle.pem
+		"
+		for c in _$_possible_certs; do
+			if [ -f "$c" ]; then
+				set -- --certificate "$c" "$@"
+				break
+			fi
+		done
+	fi
+fi
