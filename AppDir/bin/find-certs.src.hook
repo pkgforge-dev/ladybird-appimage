@@ -13,6 +13,7 @@ if [ ! -f /etc/ssl/certs/ca-certificates.crt ]; then
 		  /etc/pki/tls/cert.pem
 		  /etc/pki/tls/cacert.pem
 		  /etc/ssl/cert.pem
+		  /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
 		  /var/lib/ca-certificates/ca-bundle.pem
 		"
 		for c in _$_possible_certs; do
