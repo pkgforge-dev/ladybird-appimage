@@ -3,23 +3,23 @@
 set -eu
 
 ARCH=$(uname -m)
-VERSION=$(pacman -Q ladybird | awk '{print $2; exit}') # example command to get version of application here
-export ARCH VERSION
+export ARCH
 export OUTPATH=./dist
-export ADD_HOOKS="self-updater.bg.hook"
+export ADD_HOOKS="self-updater.bg.hook:x86-64-v3-check.hook"
 export UPINFO="gh-releases-zsync|${GITHUB_REPOSITORY%/*}|${GITHUB_REPOSITORY#*/}|latest|*$ARCH.AppImage.zsync"
 export ICON=https://raw.githubusercontent.com/LadybirdBrowser/ladybird/refs/heads/master/Base/res/icons/128x128/app-browser.png
 export DESKTOP=https://raw.githubusercontent.com/LadybirdBrowser/ladybird/refs/heads/master/Meta/CMake/freedesktop/org.ladybird.Ladybird.desktop
-export ANYLINUX_LIB=1
 
 # Deploy dependencies
+export LD_LIBRARY_PATH="/opt/ladybird/usr/lib:/opt/angle/usr/lib"
 quick-sharun \
-	/opt/ladybird/usr/bin/*          \
-	/opt/ladybird/usr/lib/*          \
-	/opt/ladybird/usr/lib/ladybird/* \
-	/opt/angle/usr/lib/*             \
+	/opt/ladybird/usr/bin/* \
+	/opt/ladybird/usr/lib   \
+	/opt/angle/usr/lib      \
 	/opt/ladybird/usr/share/*
-
+unset LD_LIBRARY_PATH
+# ANGLE provides its own libEGL/libGLESv2 which must override the mesa ones,
+# otherwise the GLES symbols collide. Move them to the top of AppDir/lib.
 mv -v ./AppDir/lib/angle/usr/lib/* ./AppDir/lib
 
 # Turn AppDir into AppImage
