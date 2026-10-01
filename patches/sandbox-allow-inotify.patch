@@ -1,0 +1,19 @@
+diff --git a/Libraries/LibSandbox/Seccomp.cpp b/Libraries/LibSandbox/Seccomp.cpp
+index 7308bea..dfd9660 100644
+--- a/Libraries/LibSandbox/Seccomp.cpp
++++ b/Libraries/LibSandbox/Seccomp.cpp
+@@ -1497,6 +1497,14 @@ void SeccompPolicy::append_allow_socket_options(u32 syscall_number, u32 level, R
+ void SeccompPolicy::allow_ipc()
+ {
+     SECCOMP_APPEND_ALLOW_SYSCALL_IF_DEFINED(*this, eventfd2);
++    // SDL's Linux joystick backend watches /dev/input with inotify to notice hotplugged devices.
++    // fontconfig chmods its cache directory and the cache files it writes. Landlock still decides
++    // which paths either of them can reach, and SDL falls back to polling when the watch fails.
++    SECCOMP_APPEND_ALLOW_SYSCALL(*this, inotify_init1);
++    SECCOMP_APPEND_ALLOW_SYSCALL(*this, inotify_add_watch);
++    SECCOMP_APPEND_ALLOW_SYSCALL(*this, inotify_rm_watch);
++    SECCOMP_APPEND_ALLOW_SYSCALL(*this, chmod);
++    SECCOMP_APPEND_ALLOW_SYSCALL(*this, fchmod);
+     SECCOMP_APPEND_ALLOW_SYSCALL_IF_DEFINED(*this, poll);
+     SECCOMP_APPEND_ALLOW_SYSCALL_IF_DEFINED(*this, ppoll);
+     SECCOMP_APPEND_ALLOW_SYSCALL_IF_DEFINED(*this, pselect6);

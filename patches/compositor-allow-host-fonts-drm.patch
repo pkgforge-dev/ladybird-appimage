@@ -1,0 +1,13 @@
+diff --git a/Services/Compositor/SandboxLinux.cpp b/Services/Compositor/SandboxLinux.cpp
+index 1022468..b916437 100644
+--- a/Services/Compositor/SandboxLinux.cpp
++++ b/Services/Compositor/SandboxLinux.cpp
+@@ -168,6 +168,8 @@ ErrorOr<void> restrict_filesystem(StringView resource_root)
+     TRY(Sandbox::add_landlock_path_if_exists(paths, "/usr/share/glvnd"sv, Sandbox::LandlockPath::Access::ReadOnly));
+     TRY(Sandbox::add_landlock_path_if_exists(paths, "/usr/share/drirc.d"sv, Sandbox::LandlockPath::Access::ReadOnly));
+     TRY(Sandbox::add_landlock_path_if_exists(paths, "/usr/share/libdrm"sv, Sandbox::LandlockPath::Access::ReadOnly));
++    TRY(Sandbox::add_landlock_path_if_exists(paths, "/usr/local/share/libdrm"sv, Sandbox::LandlockPath::Access::ReadOnly));
++    TRY(Sandbox::add_landlock_path_if_exists(paths, "/etc/fonts"sv, Sandbox::LandlockPath::Access::ReadOnly));
+     TRY(Sandbox::add_landlock_path_if_exists(paths, "/usr/share/vulkan"sv, Sandbox::LandlockPath::Access::ReadOnly));
+     TRY(Sandbox::add_landlock_path_if_exists(paths, "/dev/dri"sv, Sandbox::LandlockPath::Access::ReadWrite));
+     TRY(Sandbox::add_landlock_path_if_exists(paths, "/dev/udmabuf"sv, Sandbox::LandlockPath::Access::ReadWrite));

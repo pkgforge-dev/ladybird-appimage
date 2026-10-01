@@ -1,0 +1,31 @@
+diff --git a/Libraries/LibSandbox/Seccomp.cpp b/Libraries/LibSandbox/Seccomp.cpp
+index 7308bea..c1ea77a 100644
+--- a/Libraries/LibSandbox/Seccomp.cpp
++++ b/Libraries/LibSandbox/Seccomp.cpp
+@@ -199,6 +199,7 @@ static constexpr unsigned read_only_open_flags = [] {
+ #define IF_DEFINED_symlink(if_defined, if_not_defined) if_defined
+ #define IF_DEFINED_sysinfo(if_defined, if_not_defined) if_defined
+ #define IF_DEFINED_tgkill(if_defined, if_not_defined) if_defined
++#define IF_DEFINED_time(if_defined, if_not_defined) if_defined
+ #define IF_DEFINED_unlink(if_defined, if_not_defined) if_defined
+ #define IF_DEFINED_unlinkat(if_defined, if_not_defined) if_defined
+ #define IF_DEFINED_umask(if_defined, if_not_defined) if_defined
+@@ -492,6 +493,10 @@ static constexpr unsigned read_only_open_flags = [] {
+ #    undef IF_DEFINED_umask
+ #    define IF_DEFINED_umask(if_defined, if_not_defined) if_not_defined
+ #endif
++#ifndef __NR_time
++#    undef IF_DEFINED_time
++#    define IF_DEFINED_time(if_defined, if_not_defined) if_not_defined
++#endif
+ #ifndef __NR_wait4
+ #    undef IF_DEFINED_wait4
+ #    define IF_DEFINED_wait4(if_defined, if_not_defined) if_not_defined
+@@ -1781,6 +1786,7 @@ void SeccompPolicy::allow_clocks()
+     SECCOMP_APPEND_ALLOW_SYSCALL_IF_DEFINED(*this, clock_nanosleep);
+     SECCOMP_APPEND_ALLOW_SYSCALL_IF_DEFINED(*this, nanosleep);
+     SECCOMP_APPEND_ALLOW_SYSCALL_IF_DEFINED(*this, restart_syscall);
++    SECCOMP_APPEND_ALLOW_SYSCALL_IF_DEFINED(*this, time);
+ }
+ 
+ void SeccompPolicy::allow_gpu_device_operations()
