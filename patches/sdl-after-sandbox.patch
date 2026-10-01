@@ -1,0 +1,30 @@
+diff --git a/Services/WebContent/main.cpp b/Services/WebContent/main.cpp
+index 0880dcd..ef367e2 100644
+--- a/Services/WebContent/main.cpp
++++ b/Services/WebContent/main.cpp
+@@ -125,12 +125,6 @@ ErrorOr<int> ladybird_main(Main::Arguments arguments)
+     VERIFY(SUCCEEDED(hr));
+     ScopeGuard uninitialize_com = []() { CoUninitialize(); };
+ #endif
+-    // SDL is used for the Gamepad API.
+-    if (!SDL_Init(SDL_INIT_GAMEPAD)) {
+-        dbgln("Failed to initialize SDL3: {}", SDL_GetError());
+-        return -1;
+-    }
+-
+     auto& event_loop = Core::EventLoop::initialize_for_current_thread();
+ 
+     WebView::platform_init();
+@@ -246,6 +240,12 @@ ErrorOr<int> ladybird_main(Main::Arguments arguments)
+     if (!disable_sandbox)
+         TRY(RendererSandbox::apply_sandbox(mach_server_name, cache_path, RendererSandbox::AudioAccess::Yes));
+ 
++    // SDL is used for the Gamepad API. It has to be initialized after the sandbox is installed, because its
++    // libusb backend starts a thread and Landlock refuses to run in a process that already has a second one.
++    // Failing to initialize it only costs the Gamepad API, so do not take the process down with it.
++    if (!SDL_Init(SDL_INIT_GAMEPAD))
++        dbgln("Failed to initialize SDL3: {}", SDL_GetError());
++
+ #if defined(AK_OS_MACOS)
+     auto browser_port = TRY(Core::MachPort::look_up_from_bootstrap_server(ByteString { mach_server_name }));
+     auto transport_ports = TRY(IPC::bootstrap_transport_from_server_port(browser_port));

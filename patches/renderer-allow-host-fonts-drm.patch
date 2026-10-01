@@ -1,0 +1,22 @@
+diff --git a/Services/RendererSandboxLinux.cpp b/Services/RendererSandboxLinux.cpp
+index 3de8691..a415ff1 100644
+--- a/Services/RendererSandboxLinux.cpp
++++ b/Services/RendererSandboxLinux.cpp
+@@ -29,6 +29,17 @@ ErrorOr<void> apply_sandbox(StringView, Optional<StringView>, AudioAccess audio_
+     TRY(Sandbox::add_landlock_path_if_exists(paths, executable_path, Sandbox::LandlockPath::Access::ReadOnly));
+     TRY(Sandbox::add_landlock_path_if_exists(paths, LexicalPath::join(build_root, "lib"sv).string(), Sandbox::LandlockPath::Access::ReadOnly));
+     TRY(Sandbox::add_landlock_path_if_exists(paths, "/proc/self"sv, Sandbox::LandlockPath::Access::ReadOnly));
++    // fontconfig's configuration and the DRM device database are the host's; an
++    // AppImage does not carry its own copies of them.
++    TRY(Sandbox::add_landlock_path_if_exists(paths, "/etc/fonts"sv, Sandbox::LandlockPath::Access::ReadOnly));
++    TRY(Sandbox::add_landlock_path_if_exists(paths, "/usr/share/libdrm"sv, Sandbox::LandlockPath::Access::ReadOnly));
++    TRY(Sandbox::add_landlock_path_if_exists(paths, "/usr/local/share/libdrm"sv, Sandbox::LandlockPath::Access::ReadOnly));
++
++    // fontconfig builds the font catalog cache in this process, so give it a directory
++    // it can write before the sandbox goes on. It then neither creates nor chmods it.
++    auto fontconfig_cache_path = LexicalPath::join(Core::StandardPaths::cache_directory(), "fontconfig"sv).string();
++    TRY(Core::Directory::create(fontconfig_cache_path, Core::Directory::CreateDirectories::Yes, 0755));
++    TRY(Sandbox::add_landlock_path_if_exists(paths, fontconfig_cache_path, Sandbox::LandlockPath::Access::ReadWrite));
+     if (audio_access == AudioAccess::Yes) {
+         // NB: Connecting is not a path operation, so the broker is what reaches the socket. libpulse
+         //     still has to find it, and pa_make_secure_dir() opens the directory the socket lives in

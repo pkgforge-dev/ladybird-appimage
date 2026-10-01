@@ -1,0 +1,10 @@
+--- a/Meta/CMake/compile_options.cmake
++++ b/Meta/CMake/compile_options.cmake
+@@ -86,6 +86,7 @@
+ add_cxx_compile_options(-Wno-unused-command-line-argument)
+ add_cxx_compile_options(-Wno-user-defined-literals)
+ 
++add_cxx_compile_options(-Wno-restrict)
+ add_cxx_compile_options(-Werror)
+ 
+ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "18")
