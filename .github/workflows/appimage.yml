@@ -4,7 +4,7 @@ concurrency:
   cancel-in-progress: true
 on:
   schedule:
-    - cron: "0 7 1/7 * *" # We default to rebuilding every 21 days, change this to your liking
+    - cron: "0 7 1/11 * *" # We default to rebuilding every 21 days, change this to your liking
   workflow_dispatch: {}
 
 jobs:
@@ -18,9 +18,9 @@ jobs:
             name: Build AppImage
             arch: x86_64
           # comment out these 3 lines if aarch64 is not wanted
-#          - runs-on: ubuntu-24.04-arm
-#            name: Build AppImage
-#            arch: aarch64
+          - runs-on: ubuntu-24.04-arm
+            name: Build AppImage
+            arch: aarch64
     container: ghcr.io/pkgforge-dev/archlinux:latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
