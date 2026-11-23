@@ -7,31 +7,25 @@ ARCH=$(uname -m)
 echo "Installing package dependencies..."
 echo "---------------------------------------------------------------"
 pacman -Syu --noconfirm \
-	autoconf-archive \
-	brotli           \
-	cmake            \
-	cpptrace         \
-	curl             \
-	dbus             \
-	fast_float       \
-	fmt              \
-	libdwarf         \
-	libedit          \
-	libpsl           \
-	libtommath       \
-	nasm             \
-	ninja            \
-	openssl          \
-	python           \
-	qt6-positioning  \
-	rust             \
-	sdl3             \
-	simdjson         \
-	simdutf          \
-	sqlite           \
-	tar              \
-	woff2            \
-	zip
+	binutils          \
+	kvantum           \
+	libdrm            \
+	libglvnd          \
+	libpulse          \
+	lxqt-qtplugin     \
+	mesa              \
+	qt6-base          \
+	qt6-positioning   \
+	qt6-svg           \
+	qt6-wayland       \
+	qt6ct             \
+	tar               \
+	vulkan-icd-loader \
+	wayland           \
+	wget              \
+	xcb-util-cursor   \
+	xcb-util-wm       \
+	xz
 
 if [ "$ARCH" = 'x86_64' ]; then
 	pacman -Syu --noconfirm libva-intel-driver
@@ -41,90 +35,41 @@ echo "Installing debloated packages..."
 echo "---------------------------------------------------------------"
 get-debloated-pkgs --add-common --prefer-nano intel-media-driver-mini ffmpeg-mini
 
-# Use the system ANGLE package instead of building it via vcpkg, it is a huge
-# Chromium-based build and the Arch package ships the same chromium/7258 version
-make-aur-package --chaotic-aur angle
-
-# If the application needs to be manually built that has to be done down here
-echo "Building Ladybird..."
+echo "Downloading Ladybird..."
 echo "---------------------------------------------------------------"
-git clone https://github.com/LadybirdBrowser/ladybird ./ladybird
-cd ./ladybird
+case "$ARCH" in
+	aarch64) deb_arch=arm64;;
+	x86_64)  deb_arch=amd64;;
+	*)
+		echo "Unsupported architecture: $ARCH" >&2
+		exit 1
+		;;
+esac
 
-VERSION=r$(git rev-list --count HEAD).$(git rev-parse --short HEAD)
-echo "$VERSION" > ~/version
+APT_BASE="https://apt.ladybird.org"
+PACKAGES_META=$(wget --retry-connrefused --tries=30 -qO- \
+	"$APT_BASE/dists/resolute/main/binary-$deb_arch/Packages")
 
-# vcpkg is used to build the third party dependencies, the checkout
-# needs to match the builtin-baseline of the manifest
-git clone https://github.com/microsoft/vcpkg.git ./vcpkg
-git -C ./vcpkg checkout "$(awk -F'"' '/"builtin-baseline"/{print $4; exit}' vcpkg.json)"
-
-# Let vcpkg build only what the system cannot provide: skia, wuffs, mimalloc,
-# the ladybird ffmpeg and the pdfjs assets. Everything else comes from pacman.
-python3 - <<'EOF'
-import json
-
-system_deps = {
-    'angle', 'brotli', 'cpptrace', 'curl', 'dbus', 'fast-float', 'fmt',
-    'libdwarf', 'libedit', 'libproxy', 'libpsl', 'libtommath', 'openssl',
-    'sdl3', 'simdjson', 'simdutf', 'sqlite3', 'woff2',
-}
-
-with open('vcpkg.json') as f:
-    data = json.load(f)
-
-data['dependencies'] = [d for d in data['dependencies']
-                        if (d if isinstance(d, str) else d['name']) not in system_deps]
-data['overrides'] = [o for o in data['overrides'] if o['name'] not in system_deps]
-
-with open('vcpkg.json', 'w') as f:
-    json.dump(data, f, indent=2)
+read -r VERSION DEB_PATH DEB_SHA256 <<-EOF
+$(printf '%s\n' "$PACKAGES_META" | awk '
+	/^Version: /  { ver = $2 }
+	/^Filename: / { file = $2 }
+	/^SHA256: /   { sha = $2 }
+	/^$/ && ver != "" { print ver, file, sha; ver = file = sha = "" }
+	END { if (ver != "") print ver, file, sha }
+' | sort -V | tail -n 1)
 EOF
 
-export VCPKG_ROOT="$PWD/vcpkg"
-export VCPKG_DISABLE_METRICS="true"
-export RUSTUP_TOOLCHAIN=stable
+echo "${VERSION%%-*}" > ~/version
 
-# Apply required patches:
-# From the AUR 'ladybird' package:
-# - gcc-wno-restrict: GCC emits -Wrestrict warnings which break the build because of -Werror
-# Needed for the AppImage:
-# - sandbox-allow-time: allow the time() syscall in the seccomp sandbox
-# - ca-certificates: allow reading CA bundles in the sandbox and support SSL_CERT_FILE
-for patch in ../patches/*.patch; do
-	patch -N -p1 --forward -i "$patch"
-done
+wget --retry-connrefused --tries=30 "$APT_BASE/$DEB_PATH" -O /tmp/ladybird.deb
+printf '%s  /tmp/ladybird.deb\n' "$DEB_SHA256" | sha256sum -c -
 
-# The Release preset builds shared libraries (lagom + vcpkg deps).
-# ENABLE_CI_BASELINE_CPU makes Ladybird target x86-64-v3 instead of
-# -march=native. Without it the build bakes in whatever the CI runner supports
-# (AVX-512), and the AppImage dies with SIGILL on CPUs that lack it. This is
-# the same option the Ladybird Flatpak sets. make-appimage.sh deploys the
-# x86-64-v3-check hook so users on older CPUs get a clear warning.
-cmake \
-	--preset Release \
-	-B ./Build/release \
-	-S ./ \
-	-DCMAKE_BUILD_TYPE=Release \
-	-DENABLE_CI_BASELINE_CPU=ON \
-	-DENABLE_LTO_FOR_RELEASE=OFF \
-	-DENABLE_INSTALL_HEADERS=OFF \
-	-DCMAKE_INSTALL_PREFIX='/opt/ladybird/usr' \
-	-DCMAKE_INSTALL_LIBEXECDIR='lib/ladybird' \
-	-DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" \
-	-DVCPKG_ROOT="$VCPKG_ROOT" \
-	-Wno-dev
+(
+	cd /tmp
+	ar x /tmp/ladybird.deb
+	tar --no-overwrite-dir -xf /tmp/data.tar.* -C /
+	rm -f /tmp/ladybird.deb /tmp/debian-binary /tmp/control.tar.* /tmp/data.tar.*
+)
 
-cmake --build ./Build/release
-cmake --install ./Build/release
-
-# cmake --install only installs Ladybird's own targets. The vcpkg dependencies
-# are built as shared libraries and only exist in the build tree, so copy them
-# into the install prefix for quick-sharun.
-for vcpkg_libdir in ./Build/release/vcpkg_installed/*/lib; do
-	[ -d "$vcpkg_libdir" ] || continue
-	for vcpkg_lib in "$vcpkg_libdir"/*.so*; do
-		[ -e "$vcpkg_lib" ] || continue
-		cp -a "$vcpkg_lib" /opt/ladybird/usr/lib/
-	done
-done
+sed -i 's|/opt/ladybird/bin/||g' /usr/share/applications/org.ladybird.Ladybird.desktop
