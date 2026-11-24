@@ -16,7 +16,8 @@ quick-sharun \
 	/opt/ladybird/bin/*     \
 	/opt/ladybird/libexec/* \
 	/opt/ladybird/share/*   \
-	/usr/lib/libavcodec.so*
+	/usr/lib/libavcodec.so* \
+	/usr/lib/gio/modules/libdconfsettings.so # gsettings backend, GTK reads the desktop's theme through it
 
 # Turn AppDir into AppImage
 quick-sharun --make-appimage

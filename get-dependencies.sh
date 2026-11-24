@@ -8,6 +8,7 @@ echo "Installing package dependencies..."
 echo "---------------------------------------------------------------"
 pacman -Syu --noconfirm \
 	binutils          \
+	dconf             \
 	kvantum           \
 	libdrm            \
 	libglvnd          \
